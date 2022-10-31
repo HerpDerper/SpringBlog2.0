@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Создание сообщества</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <link media="all" rel="stylesheet" th:href="@{/bootstrap.css}">
+    <link media="all" rel="stylesheet" th:href="@{/bootstrap.js}">
+</head>
+<body>
+<div th:insert="Header"></div>
+<div class="container">
+    <h1>Изменение сообщество</h1>
+    <div class="row">
+        <div class="col-md-4">
+            <form th:action="${'/community/editCommunity'}" method="post" th:object="${community}">
+                <input type="hidden" th:field="*{id}">
+                <div class="form-group pt-1">
+                    <label class="control-label">Название</label>
+                    <input type="text" class="form-control" th:field="*{name}">
+                    <div class="error text-danger" th:if="${#fields.hasErrors('name')}" th:errors="*{name}"></div>
+                </div>
+                <div class="form-group pt-1">
+                    <label class="control-label">Описание</label>
+                    <input type="text" class="form-control" th:field="*{description}">
+                    <div class="error text-danger" th:if="${#fields.hasErrors('description')}" th:errors="*{description}"></div>
+                </div>
+                <div class="form-group pt-1">
+                    <button class="btn btn-success" type="submit">Изменить</button>
+                    <a class="btn btn-danger" href="/community/index">Отмена</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+</body>
+</html>

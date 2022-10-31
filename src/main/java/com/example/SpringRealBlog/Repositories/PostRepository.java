@@ -7,7 +7,9 @@ import java.util.List;
 
 public interface PostRepository extends CrudRepository<Post, Long> {
 
-    List<Post> findByDescription(String description);
-
     List<Post> findByDescriptionContains(String description);
+
+    List<Post> findByCommunityOwner_Community(Community community);
+
+    List<Post> findByDescriptionContainsAndCommunityOwner_Community(String description, Community community);
 }

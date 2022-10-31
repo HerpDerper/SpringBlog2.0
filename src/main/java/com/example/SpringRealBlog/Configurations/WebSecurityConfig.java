@@ -36,11 +36,11 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
         http.csrf().disable()
                 .authorizeRequests()
-                .antMatchers("/registration", "/login").permitAll()
+                .antMatchers("/registration", "/bootstrap.css", "/bootstrap.js", "/login").permitAll()
                 .anyRequest().authenticated()
                 .and()
                 .formLogin()
-                .successForwardUrl("/post/index")
+                .successForwardUrl("/main")
                 .loginPage("/login").permitAll()
                 .and()
                 .logout().permitAll();
@@ -51,7 +51,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         auth.jdbcAuthentication()
                 .dataSource(dataSource)
                 .passwordEncoder(passwordEncoder)
-                .usersByUsernameQuery("select login, password, active from account where login=?")
-                .authoritiesByUsernameQuery("select u.login, ur.roles from account u inner join account_role ur on u.id = ur.account_id where u.login=?");
+                .usersByUsernameQuery("select username, password, active from user where username=?")
+                .authoritiesByUsernameQuery("select u.username, ur.roles from user u inner join user_role ur on u.id = ur.user_id where u.username=?");
     }
 }

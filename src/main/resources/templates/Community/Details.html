@@ -1,0 +1,140 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Информация о посте</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <link media="all" rel="stylesheet" th:href="@{/bootstrap.css}">
+    <link media="all" rel="stylesheet" th:href="@{/bootstrap.js}">
+</head>
+<body>
+<header>
+    <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
+        <div class="container">
+            <a class="navbar-brand" href="/main">BlogSpring</a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target=".navbar-collapse" aria-controls="navbarSupportedContent"
+                    aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
+                <ul class="navbar-nav flex-grow-1">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/post/index">Посты</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/community/index">Сообщества</a>
+                    </li>
+                    <li class="nav-item" th:if="${adminAccess}">
+                        <a class="nav-link" href="/user/index">Пользователи</a>
+                    </li>
+                    <li class="nav-item" th:if="${adminAccess}">
+                        <a class="nav-link" href="/thematic/index">Тематики</a>
+                    </li>
+                </ul>
+                <form>
+                    <div class="container">
+                        <div class="row justify-content-md-center">
+                            <div class="col col-lg-6">
+                                <input type="text" name="name" class="form-control" placeholder="Название"/>
+                            </div>
+                            <div class="col col-lg-3">
+                                <input class="btn btn-success" formmethod="get" type="submit" formaction="/community/details" value="Поиск" />
+                            </div>
+                            <div class="col col-lg-3">
+                                <form th:action="@{/logout}" method="post">
+                                    <input class="btn btn-danger" type="submit" value="Выйти">
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </nav>
+</header>
+<div class="container">
+    <div class="card card_margin mb-2" th:object="${community}">
+        <div class="card-header">
+            Подписчиков: <a th:text="*{subscribersCount}"/>
+            </br>
+            Рекомендаций: <a th:text="*{recommendationsCount}"/>
+        </div>
+        <div class="card-body">
+            Название: <h4 class="card-title" th:text="*{name}"/>
+            Описание: <h6 class="card-title" th:text="*{description}"/>
+        </div>
+        <div class="card-footer">
+            <div class="btn-group">
+                <div class="m-lg-1">
+                    <form th:action="@{/community/subscribe}" method="post" th:if="">
+                        <input type="hidden" th:value="*{id}" name="id">
+                        <input value="Подписаться" type="submit" class="btn btn-outline-success">
+                    </form>
+                    <form th:action="@{/community/unsubscribe}" method="post">
+                        <input type="hidden" th:value="*{id}" name="id">
+                        <input value="Подписаться" type="submit" class="btn btn-outline-success">
+                    </form>
+                </div>
+                <div class="m-lg-1">
+                    <form th:action="@{/community/recommend}" method="post">
+                        <input type="hidden" th:value="*{id}" name="id">
+                        <input value="Рекомендовать" type="submit" class="btn btn-outline-primary">
+                    </form>
+                </div>
+                <div class="m-lg-1">
+                    <form th:action="@{/community/edit}" method="post">
+                        <input type="hidden" th:value="*{id}" name="id">
+                        <input value="Изменить" type="submit" class="btn btn-outline-warning">
+                    </form>
+                </div>
+                <div class="m-lg-1">
+                    <form th:action="@{/community/delete}" method="post">
+                        <input type="hidden" th:value="*{id}" name="id">
+                        <input value="Удалить" type="submit" class="btn btn-outline-danger">
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+    <form th:action="${'/post/create'}" method="post" th:object="${community}">
+        <div class="form-group">
+            <input type="hidden" name="postId" th:value="${community.id}"/>
+            <button class="btn btn-success" type="submit">Написать пост</button>
+        </div>
+    </form>
+    <hr/>
+    <tbody th:each="el : ${posts}">
+    <dl class="row">
+        <dd class="col-sm-10">
+            Автор: <a th:text="${el.user.username}"/>
+        </dd>
+        <a th:text="${el.dateCreation}" class="opacity"/>
+        <dd class="col-sm-10">
+            👍 <a th:text="${el.likeCount}"/>
+        </dd>
+    </dl>
+    <a th:text="${el.text}"/>
+    <br/>
+    <div class="btn-group">
+        <form th:if="${adminAccess}" th:action="@{/post/edit}" method="post" class="pr-3">
+            <input type="hidden" th:value="${el.id}" name="id">
+            <input type="hidden" th:value="${community.id}" name="postId">
+            <input value="Изменить" type="submit" class="btn btn-outline-primary">
+        </form>
+        <form th:if="${adminAccess}" th:action="@{/post/delete}" method="post" class="pr-3">
+            <input type="hidden" th:value="${el.id}" name="id">
+            <input type="hidden" th:value="${community.id}" name="postId">
+            <input value="Удалить" type="submit" class="btn btn-outline-danger">
+        </form>
+        <form th:action="@{/post/details}" method="post">
+            <input type="hidden" th:value="${el.id}" name="id">
+            <input type="hidden" th:value="${community.id}" name="postId">
+            <input value="Посмотреть" type="submit" class="btn btn-outline-info">
+        </form>
+    </div>
+    </tbody>
+    <hr/>
+</div>
+</div>
+</body>
+</html>

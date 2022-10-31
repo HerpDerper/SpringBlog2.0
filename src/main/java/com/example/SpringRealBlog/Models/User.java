@@ -6,6 +6,7 @@ import javax.persistence.*;
 import javax.validation.constraints.*;
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 
 @Entity
 public class User {
@@ -13,6 +14,14 @@ public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
+
+    @NotBlank(message = "Логин не должен быть пустым или состоять из одних лишь пробелов")
+    @Size(min = 1, max = 16, message = "Логин должен быть от 1 до 16 символов")
+    @Column(unique = true)
+    private String username;
+
+    @NotBlank(message = "Пароль не должен быть пустым или состоять из одних лишь пробелов")
+    private String password;
 
     @Pattern(regexp = "[a-zA-Zа-яА-Я]{1,30}", message = "Имя должно быть от 1 до 30 символов и состоять только из букв")
     private String name;
@@ -29,14 +38,14 @@ public class User {
     @Temporal(TemporalType.DATE)
     private Date dateBirth;
 
+    @ElementCollection(targetClass = Role.class, fetch = FetchType.EAGER)
+    @CollectionTable(name = "userRole", joinColumns = @JoinColumn(name = "userId"))
+    @Enumerated(EnumType.STRING)
+    private Set<Role> roles;
+
     @OneToOne
     @JoinColumn(name = "contactDataId", referencedColumnName = "id")
     private ContactData contactData;
-
-    @NotNull
-    @OneToOne
-    @JoinColumn(name = "accountId", referencedColumnName = "id")
-    private Account account;
 
     @ManyToMany
     @JoinTable(name = "postLike", joinColumns = @JoinColumn(name = "userId"), inverseJoinColumns = @JoinColumn(name = "postId"))
@@ -47,23 +56,35 @@ public class User {
     public List<Comment> likedComments;
 
     @ManyToMany
+    @JoinTable(name = "recommended", joinColumns = @JoinColumn(name = "userId"), inverseJoinColumns = @JoinColumn(name = "communityId"))
+    public List<User> recommendedCommunity;
+
+    @ManyToMany
     @JoinTable(name = "subscriber", joinColumns = @JoinColumn(name = "userId"), inverseJoinColumns = @JoinColumn(name = "communityId"))
     public List<Community> subscribedCommunities;
+
+    private boolean active;
+
+    public boolean isActive() {
+        return active;
+    }
+
+    public void setActive(boolean active) {
+        this.active = active;
+    }
 
     public User() {
     }
 
-    public User(String name, String surname, String patronymic, Date dateBirth, ContactData contactData, Account account,
-                List<Post> likedPosts, List<Comment> likedComments, List<Community> subscribedCommunities) {
+    public User(String username, String password, String name, String surname, String patronymic, Date dateBirth,
+                Set<Role> roles) {
+        this.username = username;
+        this.password = password;
         this.name = name;
         this.surname = surname;
         this.patronymic = patronymic;
         this.dateBirth = dateBirth;
-        this.contactData = contactData;
-        this.account = account;
-        this.likedPosts = likedPosts;
-        this.likedComments = likedComments;
-        this.subscribedCommunities = subscribedCommunities;
+        this.roles = roles;
     }
 
     public Long getId() {
@@ -72,6 +93,22 @@ public class User {
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
     }
 
     public String getName() {
@@ -106,20 +143,20 @@ public class User {
         this.dateBirth = dateBirth;
     }
 
+    public Set<Role> getRoles() {
+        return roles;
+    }
+
+    public void setRoles(Set<Role> roles) {
+        this.roles = roles;
+    }
+
     public ContactData getContactData() {
         return contactData;
     }
 
     public void setContactData(ContactData contactData) {
         this.contactData = contactData;
-    }
-
-    public Account getAccount() {
-        return account;
-    }
-
-    public void setAccount(Account account) {
-        this.account = account;
     }
 
     public List<Post> getLikedPosts() {
@@ -136,6 +173,14 @@ public class User {
 
     public void setLikedComments(List<Comment> likedComments) {
         this.likedComments = likedComments;
+    }
+
+    public List<User> getRecommendedCommunity() {
+        return recommendedCommunity;
+    }
+
+    public void setRecommendedCommunity(List<User> recommendedCommunity) {
+        this.recommendedCommunity = recommendedCommunity;
     }
 
     public List<Community> getSubscribedCommunities() {

@@ -34,7 +34,7 @@ public class Post {
     private CommunityOwner communityOwner;
 
     @ManyToMany
-    @JoinTable(name = "likedUsers", joinColumns = @JoinColumn(name = "postId"), inverseJoinColumns = @JoinColumn(name = "userId"))
+    @JoinTable(name = "postLike", joinColumns = @JoinColumn(name = "postId"), inverseJoinColumns = @JoinColumn(name = "userId"))
     public List<User> likedUsers;
 
     public Post() {

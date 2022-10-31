@@ -7,7 +7,5 @@ import java.util.List;
 
 public interface CommunityRepository extends CrudRepository<Community, Long> {
 
-    List<Community> findByName(String name);
-
     List<Community> findByNameContains(String name);
 }
