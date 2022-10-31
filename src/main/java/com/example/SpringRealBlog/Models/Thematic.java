@@ -1,9 +1,6 @@
 package com.example.SpringRealBlog.Models;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
 import javax.validation.constraints.Pattern;
 
 @Entity
@@ -13,6 +10,7 @@ public class Thematic {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
+    @Column(unique = true)
     @Pattern(regexp = "[a-zA-Zа-яА-Я]{1,50}", message = "Название тематики должно быть от 1 до 50 символов и состоять только из букв")
     private String name;
 

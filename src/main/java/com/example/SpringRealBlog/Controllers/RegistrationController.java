@@ -30,7 +30,7 @@ public class RegistrationController {
     @PostMapping("/registration")
     public String userCreate(@ModelAttribute("user") @Valid User user, BindingResult bindingResult) {
         if(userRepository.findUserByUsername(user.getUsername()) != null) {
-            ObjectError error = new ObjectError("login", "Логин уже занят");
+            ObjectError error = new ObjectError("username", "Логин уже занят");
             bindingResult.addError(error);
         }
         if (bindingResult.hasErrors()) return "User/Create";

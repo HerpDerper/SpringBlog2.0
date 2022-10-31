@@ -1,10 +1,30 @@
 <!DOCTYPE html>
-<html lang="en">
+<html xmlns:th="http://www.thymeleaf.org">
 <head>
-    <meta charset="UTF-8">
-    <title>Title</title>
+    <title>Изменение тематики</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <link media="all" rel="stylesheet" th:href="@{/bootstrap.css}">
+    <link media="all" rel="stylesheet" th:href="@{/bootstrap.js}">
 </head>
 <body>
-
+<div th:insert="Header"></div>
+<div class="container">
+    <div class="row">
+        <div class="col-md-4">
+            <form th:action="${'/user/editThematic'}" method="post" th:object="${thematic}">
+                <input type="hidden" name="id" th:value="*{id}"/>
+                <div class="form-group">
+                    <label class="control-label">Имя</label>
+                    <input type="text" class="form-control" th:field="*{name}" th:value="*{name}">
+                    <div class="error text-danger" th:if="${#fields.hasErrors('name')}" th:errors="*{name}"></div>
+                </div>
+                <div class="form-group">
+                    <button class="btn btn-success" type="submit">Изменить</button>
+                    <a class="btn btn-danger" href="/thematic/index">Отмена</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
 </body>
 </html>

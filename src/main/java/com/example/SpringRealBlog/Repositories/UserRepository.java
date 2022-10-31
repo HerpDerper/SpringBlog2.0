@@ -7,8 +7,6 @@ import java.util.List;
 
 public interface UserRepository extends CrudRepository<User, Long> {
 
-    Iterable<User> findBySurname(String surname);
-
     Iterable<User> findBySurnameContains(String surname);
 
     User findUserByUsername(String username);

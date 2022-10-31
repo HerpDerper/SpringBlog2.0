@@ -129,7 +129,7 @@ public class CommunityController {
         User user = userRepository.findUserByUsername(auth.getName());
         List<Post> posts = postRepository.findByCommunityOwner_Community(community);
         CommunitySubscriber communitySubscriber = communitySubscriberRepository.findByCommunityAndUser(community, user);
-        if(communitySubscriber == null) model.addAttribute("message", "Подписаться");
+        if (communitySubscriber == null) model.addAttribute("message", "Подписаться");
         else model.addAttribute("message", "Отписаться");
         model.addAttribute("posts", posts);
         model.addAttribute("community", community);
@@ -148,17 +148,27 @@ public class CommunityController {
         model.addAttribute("community", community);
         model.addAttribute("user", user);
         model.addAttribute("adminAccess", new AdminCheck().adminAccess(auth));
-        CommunitySubscriber communitySubscriber = communitySubscriberRepository.findByCommunityAndUser(community, user);
-        if (communitySubscriber == null) {
-            communitySubscriber = new CommunitySubscriber(user, community);
-            community.setSubscribersCount(community.getSubscribersCount() + 1);
-            communityRepository.save(community);
-            communitySubscriberRepository.save(communitySubscriber);
-        } else {
-            communitySubscriberRepository.delete(communitySubscriber);
-            community.setSubscribersCount(community.getSubscribersCount() - 1);
-            communityRepository.save(community);
-        }
+        CommunitySubscriber communitySubscriber = new CommunitySubscriber(user, community);
+        community.setSubscribersCount(community.getSubscribersCount() + 1);
+        communityRepository.save(community);
+        communitySubscriberRepository.save(communitySubscriber);
         return "Community/Details";
+    }
+
+    @PostMapping("/community/unSubscribe")
+    public String communityUnSubscribe(@RequestParam long id, Model model) {
+        Community community = communityRepository.findById(id).get();
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        User user = userRepository.findUserByUsername(auth.getName());
+        List<Post> posts = postRepository.findByCommunityOwner_Community(community);
+        model.addAttribute("posts", posts);
+        model.addAttribute("community", community);
+        model.addAttribute("user", user);
+        model.addAttribute("adminAccess", new AdminCheck().adminAccess(auth));
+        CommunitySubscriber communitySubscriber = communitySubscriberRepository.findByCommunityAndUser(community, user);
+        communitySubscriberRepository.delete(communitySubscriber);
+        community.setSubscribersCount(community.getSubscribersCount() - 1);
+        communityRepository.save(community);
+        return "redirect:/community/index";
     }
 }

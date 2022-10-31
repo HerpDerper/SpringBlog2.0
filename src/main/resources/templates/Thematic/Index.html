@@ -1,10 +1,81 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>Title</title>
+    <title>Тематики</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <link media="all" rel="stylesheet" th:href="@{/bootstrap.css}">
+    <link media="all" rel="stylesheet" th:href="@{/bootstrap.js}">
 </head>
 <body>
-
+<header>
+    <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
+        <div class="container">
+            <a class="navbar-brand" href="/main">BlogSpring</a>
+            <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
+                <ul class="navbar-nav flex-grow-1">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/post/index">Посты</a>
+                    </li>
+                    <li class="nav-item" th:if="${adminAccess}">
+                        <a class="nav-link" href="/community/index">Сообщества</a>
+                    </li>
+                    <li class="nav-item" th:if="${adminAccess}">
+                        <a class="nav-link" href="/user/index">Пользователи</a>
+                    </li>
+                    <li class="nav-item" th:if="${adminAccess}">
+                        <a class="nav-link" href="/thematic/index">Тематики</a>
+                    </li>
+                </ul>
+                <form class="pr-3" >
+                    <div class="form-inline form-group">
+                        <input type="text" name="email"  class="form-control" placeholder="Email"/>
+                        <div class="col-auto my-0">
+                            <div class="custom-control custom-checkbox mr-sm-2">
+                                <input type="checkbox" class="custom-control-input" id="customControl">
+                                <label class="custom-control-label" for="customControl">Точный поиск</label>
+                            </div>
+                        </div>
+                        <input class="btn btn-success" formmethod="get" type="submit" formaction="/user/index" value="Поиск" />
+                    </div>
+                </form>
+                <form th:action="@{/logout}" method="post">
+                    <div class="form-inline form-group">
+                        <input class="btn btn-danger" type="submit" value="Выйти">
+                    </div>
+                </form>
+            </div>
+        </div>
+    </nav>
+</header>
+<div class="container">
+    <table class="table">
+        <thead>
+        <tr>
+            <th>
+                Название
+            </th>
+            <th>
+                Действия
+            </th>
+        </tr>
+        </thead>
+        <tbody th:each="el : ${thematics}">
+        <tr>
+            <td th:text="${el.name}"/>
+            <td>
+                <div class="btn-group">
+                    <form th:action="@{/thematic/edit}" method="post" class="pr-3">
+                        <input type="hidden" th:value="${el.id}" name="id">
+                        <input value="Редактировать" type="submit" class="btn btn-outline-primary">
+                    </form>
+                    <form th:action="@{/user/delete}" method="post" class="pr-3">
+                        <input type="hidden" th:value="${el.id}" name="id">
+                        <input value="Удалить" type="submit" class="btn btn-outline-danger">
+                    </form>
+                </div>
+        </tr>
+        </tbody>
+    </table>
+</div>
 </body>
 </html>

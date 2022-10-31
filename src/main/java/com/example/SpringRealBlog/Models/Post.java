@@ -27,7 +27,7 @@ public class Post {
 
     @ManyToOne
     @JoinColumn(name = "thematicId", referencedColumnName = "id")
-    private User user;
+    private Thematic thematic;
 
     @ManyToOne
     @JoinColumn(name = "communityOwnerId", referencedColumnName = "id")
@@ -40,12 +40,12 @@ public class Post {
     public Post() {
     }
 
-    public Post(String description, String text, int likeCount, Date dateCreation, User user, CommunityOwner communityOwner, List<User> likedUsers) {
+    public Post(String description, String text, int likeCount, Date dateCreation, Thematic thematic, CommunityOwner communityOwner, List<User> likedUsers) {
         this.description = description;
         this.text = text;
         this.likeCount = likeCount;
         this.dateCreation = dateCreation;
-        this.user = user;
+        this.thematic = thematic;
         this.communityOwner = communityOwner;
         this.likedUsers = likedUsers;
     }
@@ -98,12 +98,12 @@ public class Post {
         this.likedUsers = likedUsers;
     }
 
-    public User getUser() {
-        return user;
+    public Thematic getThematic() {
+        return thematic;
     }
 
-    public void setUser(User user) {
-        this.user = user;
+    public void setThematic(Thematic thematic) {
+        this.thematic = thematic;
     }
 
     public CommunityOwner getCommunityOwner() {

@@ -48,7 +48,6 @@
     </nav>
 </header>
 <div class="container">
-    <h1>Все пользователи</h1>
     <table class="table">
         <thead>
         <tr>
@@ -84,10 +83,6 @@
                     <form th:action="@{/user/edit}" method="post" class="pr-3">
                         <input type="hidden" th:value="${el.id}" name="id">
                         <input value="Редактировать" type="submit" class="btn btn-outline-primary">
-                    </form>
-                    <form th:action="@{/user/delete}" method="post" class="pr-3">
-                        <input type="hidden" th:value="${el.id}" name="id">
-                        <input value="Удалить" type="submit" class="btn btn-outline-danger">
                     </form>
                     <form th:action="@{/user/details}" method="post" class="pr-3">
                         <input type="hidden" th:value="${el.id}" name="id">

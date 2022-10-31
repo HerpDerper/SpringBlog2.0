@@ -7,5 +7,7 @@ import java.util.List;
 
 public interface ThematicRepository extends CrudRepository<Thematic, Long> {
 
-    List<Thematic> findByNameContains(String email);
+    List<Thematic> findByNameContains(String name);
+
+    Thematic findByName(String name);
 }
