@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html xmlns:th="http://www.thymeleaf.org">
 <head>
     <title>Пользователи</title>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
@@ -30,7 +30,7 @@
                     <div class="container">
                         <div class="row justify-content-md-center">
                             <div class="col col-lg-6">
-                                <input type="text" name="username" class="form-control" placeholder="Логин"/>
+                                <input type="text" name="surname" class="form-control" placeholder="Фамилия"/>
                             </div>
                             <div class="col col-lg-3">
                                 <input class="btn btn-success" formmethod="get" type="submit" formaction="/user/index" value="Поиск" />
@@ -88,9 +88,13 @@
                         <input type="hidden" th:value="${el.id}" name="id">
                         <input value="Детали" type="submit" class="btn btn-outline-info">
                     </form>
-                    <form th:action="@{/role/edit}" method="post">
+                    <form th:if="${el.getRoles().contains(userR)}" th:action="@{/role/editToAdmin}" method="post">
                         <input type="hidden" th:value="${el.id}" name="userId">
-                        <input value="Роли" type="submit" class="btn btn-outline-secondary">
+                        <input value="Сделать админом" type="submit" class="btn btn-outline-danger">
+                    </form>
+                    <form th:if="${el.getRoles().contains(adminR)}" th:action="@{/role/editToUser}" method="post">
+                        <input type="hidden" th:value="${el.id}" name="userId">
+                        <input value="Сделать пользователем" type="submit" class="btn btn-outline-success">
                     </form>
                     <form th:action="@{/contactData/create}" method="post" th:if="${el.contactData==null}">
                         <input type="hidden" th:value="${el.id}" name="userId">

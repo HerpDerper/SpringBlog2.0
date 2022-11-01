@@ -20,6 +20,7 @@ public class User {
     @Column(unique = true)
     private String username;
 
+    // @Pattern(regexp = "[a-zA-Zа-яА-Я0-9]{1,30}", message = "Имя должно быть от 1 до 30 символов и состоять только из букв")
     @NotBlank(message = "Пароль не должен быть пустым или состоять из одних лишь пробелов")
     private String password;
 
@@ -46,18 +47,6 @@ public class User {
     @OneToOne
     @JoinColumn(name = "contactDataId", referencedColumnName = "id")
     private ContactData contactData;
-
-    @ManyToMany
-    @JoinTable(name = "postLike", joinColumns = @JoinColumn(name = "userId"), inverseJoinColumns = @JoinColumn(name = "postId"))
-    public List<Post> likedPosts;
-
-    @ManyToMany
-    @JoinTable(name = "commentLike", joinColumns = @JoinColumn(name = "userId"), inverseJoinColumns = @JoinColumn(name = "commentId"))
-    public List<Comment> likedComments;
-
-    @ManyToMany
-    @JoinTable(name = "recommended", joinColumns = @JoinColumn(name = "userId"), inverseJoinColumns = @JoinColumn(name = "communityId"))
-    public List<Community> recommendedCommunity;
 
     private boolean active;
 
@@ -153,29 +142,5 @@ public class User {
 
     public void setContactData(ContactData contactData) {
         this.contactData = contactData;
-    }
-
-    public List<Post> getLikedPosts() {
-        return likedPosts;
-    }
-
-    public void setLikedPosts(List<Post> likedPosts) {
-        this.likedPosts = likedPosts;
-    }
-
-    public List<Comment> getLikedComments() {
-        return likedComments;
-    }
-
-    public void setLikedComments(List<Comment> likedComments) {
-        this.likedComments = likedComments;
-    }
-
-    public List<Community> getRecommendedCommunity() {
-        return recommendedCommunity;
-    }
-
-    public void setRecommendedCommunity(List<Community> recommendedCommunity) {
-        this.recommendedCommunity = recommendedCommunity;
     }
 }

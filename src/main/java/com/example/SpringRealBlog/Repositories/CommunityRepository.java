@@ -1,6 +1,6 @@
 package com.example.SpringRealBlog.Repositories;
 
-import com.example.SpringRealBlog.Models.*;
+import com.example.SpringRealBlog.Models.Community;
 import org.springframework.data.repository.CrudRepository;
 
 import java.util.List;

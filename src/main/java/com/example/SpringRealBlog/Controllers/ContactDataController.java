@@ -1,9 +1,11 @@
 package com.example.SpringRealBlog.Controllers;
 
+import com.example.SpringRealBlog.AdminCheck;
 import com.example.SpringRealBlog.Models.ContactData;
 import com.example.SpringRealBlog.Models.User;
 import com.example.SpringRealBlog.Repositories.ContactDataRepository;
 import com.example.SpringRealBlog.Repositories.UserRepository;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -29,6 +31,7 @@ public class ContactDataController {
     public String contactDataCreate(@RequestParam long userId, @ModelAttribute("contactData") ContactData contactData, Model model) {
         User user = userRepository.findById(userId).get();
         model.addAttribute("user", user);
+        model.addAttribute("adminAccess", true);
         return "ContactData/Create";
     }
 
@@ -47,6 +50,7 @@ public class ContactDataController {
 
     @PostMapping("/contactData/edit")
     public String contactDataEdit(@RequestParam long id, Model model) {
+        model.addAttribute("adminAccess", true);
         ContactData contactData = contactDataRepository.findById(id).get();
         model.addAttribute("contactData", contactData);
         return "ContactData/Edit";
@@ -55,7 +59,7 @@ public class ContactDataController {
     @PostMapping("/contactData/editData")
     public String contactDataEdit(@RequestParam long id, @ModelAttribute("contactData") @Valid ContactData contactDataValid, BindingResult bindingResult) {
         ContactData contactData = contactDataRepository.findById(id).get();
-        if (bindingResult.hasErrors())   return "ContactData/Edit";
+        if (bindingResult.hasErrors()) return "ContactData/Edit";
         contactData.setAddress(contactDataValid.getAddress());
         contactData.setEmail(contactDataValid.getEmail());
         contactData.setPhone(contactDataValid.getPhone());

@@ -1,12 +1,7 @@
 package com.example.SpringRealBlog.Controllers;
 
-import com.example.SpringRealBlog.Models.Comment;
-import com.example.SpringRealBlog.Models.Post;
-import com.example.SpringRealBlog.Models.Thematic;
-import com.example.SpringRealBlog.Models.User;
-import com.example.SpringRealBlog.Repositories.CommentRepository;
-import com.example.SpringRealBlog.Repositories.PostRepository;
-import com.example.SpringRealBlog.Repositories.ThematicRepository;
+import com.example.SpringRealBlog.Models.*;
+import com.example.SpringRealBlog.Repositories.*;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -24,13 +19,35 @@ import java.util.List;
 @PreAuthorize("hasAnyAuthority('ADMIN')")
 @Controller
 public class ThematicController {
+
     private final ThematicRepository thematicRepository;
 
-    private final CommentRepository commentRepository;
+    private final CommunityRepository communityRepository;
+
+    private final CommunityOwnerRepository communityOwnerRepository;
 
     private final PostRepository postRepository;
 
-    public ThematicController(ThematicRepository thematicRepository, CommentRepository commentRepository, PostRepository postRepository) {
+    private final CommentRepository commentRepository;
+
+    private final CommunitySubscriberRepository communitySubscriberRepository;
+
+    private final CommunityRecommendationRepository communityRecommendationRepository;
+
+    private final CommentLikeRepository commentLikeRepository;
+
+    private final PostLikeRepository postLikeRepository;
+
+    public ThematicController(ThematicRepository thematicRepository, CommunityRepository communityRepository,
+                              CommunityOwnerRepository communityOwnerRepository, CommentRepository commentRepository, PostRepository postRepository,
+                              CommunitySubscriberRepository communitySubscriberRepository, CommunityRecommendationRepository communityRecommendationRepository,
+                              CommentLikeRepository commentLikeRepository, PostLikeRepository postLikeRepository) {
+        this.communityRepository = communityRepository;
+        this.communityOwnerRepository = communityOwnerRepository;
+        this.communitySubscriberRepository = communitySubscriberRepository;
+        this.communityRecommendationRepository = communityRecommendationRepository;
+        this.commentLikeRepository = commentLikeRepository;
+        this.postLikeRepository = postLikeRepository;
         this.thematicRepository = thematicRepository;
         this.commentRepository = commentRepository;
         this.postRepository = postRepository;
@@ -67,9 +84,13 @@ public class ThematicController {
         Thematic thematic = thematicRepository.findById(id).get();
         List<Post> posts = postRepository.findByThematic(thematic);
         List<Comment> comments = new ArrayList<>();
-        for (Post post : posts) {
-            comments.addAll(commentRepository.findByPost(post));
-        }
+        List<CommentLike> commentLikes = new ArrayList<>();
+        List<PostLike> postLikes = new ArrayList<>();
+        for (Post post : posts) comments.addAll(commentRepository.findByPost(post));
+        for(Comment comment: comments) commentLikes.addAll(commentLikeRepository.findByComment(comment));
+        for(Post post: posts) postLikes.addAll(postLikeRepository.findByPost(post));
+        postLikeRepository.deleteAll(postLikes);
+        commentLikeRepository.deleteAll(commentLikes);
         commentRepository.deleteAll(comments);
         postRepository.deleteAll(posts);
         thematicRepository.delete(thematic);
@@ -77,7 +98,7 @@ public class ThematicController {
     }
 
     @PostMapping("/thematic/createThematic")
-    public String thematicCreate(@ModelAttribute("thematic") @Valid Thematic thematic, BindingResult bindingResult) {
+    public String thematicCreate(@ModelAttribute("thematic") @Valid Thematic thematic, BindingResult bindingResult, Model model) {
         if (thematicRepository.findByName(thematic.getName()) != null)
             bindingResult.addError(new ObjectError("name", "Название уже занято"));
         if (bindingResult.hasErrors()) return "Thematic/Create";
@@ -86,7 +107,8 @@ public class ThematicController {
     }
 
     @GetMapping("/thematic/create")
-    public String thematicCreate(@ModelAttribute("thematic") Thematic thematic) {
+    public String thematicCreate(@ModelAttribute("thematic") Thematic thematic, Model model) {
+        model.addAttribute("adminAccess", true);
         return "Thematic/Create";
     }
 }

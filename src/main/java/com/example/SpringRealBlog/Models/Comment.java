@@ -30,10 +30,6 @@ public class Comment {
     @JoinColumn(name = "postId", referencedColumnName = "id")
     private Post post;
 
-    @ManyToMany
-    @JoinTable(name = "commentLike", joinColumns = @JoinColumn(name = "commentId"), inverseJoinColumns = @JoinColumn(name = "userId"))
-    public List<User> likedUsers;
-
     public Comment() {
     }
 
@@ -91,13 +87,5 @@ public class Comment {
 
     public void setPost(Post post) {
         this.post = post;
-    }
-
-    public List<User> getLikedUsers() {
-        return likedUsers;
-    }
-
-    public void setLikedUsers(List<User> likedUsers) {
-        this.likedUsers = likedUsers;
     }
 }

@@ -8,6 +8,7 @@
 </head>
 <div th:insert="Header"></div>
 <div class="container">
+  <h1>Пост</h1>
   <div class="card card_margin" th:object="${post}">
     <div class="card-header">
       <dl class="row">
@@ -63,6 +64,7 @@
       <button class="btn btn-success m-lg-1" type="submit">Написать комментарий</button>
     </div>
   </form>
+  <h1>Комментарии</h1>
   <hr/>
   <tbody th:each="el : ${comments}">
   <dl class="row">
@@ -91,7 +93,7 @@
       </form>
     </div>
     <div class="m-lg-1">
-      <form th:if="${user.username==el.user.username||adminAccess}" th:action="@{/comment/delete}" method="post" class="pr-3">
+      <form th:if="${user.username==el.user.username||adminAccess||user.username==post.communityOwner.user.username}" th:action="@{/comment/delete}" method="post" class="pr-3">
         <input type="hidden" th:value="${el.id}" name="id">
         <input value="Удалить" type="submit" class="btn btn-outline-danger">
       </form>

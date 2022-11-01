@@ -2,8 +2,10 @@ package com.example.SpringRealBlog.Controllers;
 
 import com.example.SpringRealBlog.AdminCheck;
 import com.example.SpringRealBlog.Models.Comment;
+import com.example.SpringRealBlog.Models.CommentLike;
 import com.example.SpringRealBlog.Models.Post;
 import com.example.SpringRealBlog.Models.User;
+import com.example.SpringRealBlog.Repositories.CommentLikeRepository;
 import com.example.SpringRealBlog.Repositories.CommentRepository;
 import com.example.SpringRealBlog.Repositories.PostRepository;
 import com.example.SpringRealBlog.Repositories.UserRepository;
@@ -12,12 +14,14 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import javax.validation.Valid;
 import java.util.Date;
+import java.util.List;
 
 @Controller
 public class CommentController {
@@ -28,10 +32,13 @@ public class CommentController {
 
     private final CommentRepository commentRepository;
 
-    public CommentController(PostRepository postRepository, UserRepository userRepository, CommentRepository commentRepository) {
+    private final CommentLikeRepository commentLikeRepository;
+
+    public CommentController(PostRepository postRepository, UserRepository userRepository, CommentRepository commentRepository, CommentLikeRepository commentLikeRepository) {
         this.postRepository = postRepository;
         this.userRepository = userRepository;
         this.commentRepository = commentRepository;
+        this.commentLikeRepository = commentLikeRepository;
     }
 
     @PostMapping("/comment/create")
@@ -87,6 +94,8 @@ public class CommentController {
         model.addAttribute("adminAccess", new AdminCheck().adminAccess(auth));
         Comment comment = commentRepository.findById(id).get();
         User user = userRepository.findUserByUsername(auth.getName());
+        List<CommentLike> commentLikes = commentLikeRepository.findByComment(comment);
+        commentLikeRepository.deleteAll(commentLikes);
         commentRepository.delete(comment);
         Post post = postRepository.findById(comment.getPost().getId()).get();
         model.addAttribute("post", post);
@@ -96,21 +105,23 @@ public class CommentController {
     }
 
     @PostMapping("/comment/likeComment")
-    public String commentLike(@ModelAttribute("comment") Comment commentCreate, @RequestParam long id,  Model model) {
+    public String commentLike(@ModelAttribute("comment") Comment commentCreate, @RequestParam long id, Model model) {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         model.addAttribute("adminAccess", new AdminCheck().adminAccess(auth));
         User user = userRepository.findUserByUsername(auth.getName());
         Comment comment = commentRepository.findById(id).get();
         Post post = postRepository.findById(comment.getPost().getId()).get();
+        CommentLike commentLike = commentLikeRepository.findByCommentAndUser(comment, user);
         model.addAttribute("post", post);
         model.addAttribute("user", user);
         model.addAttribute("comments", commentRepository.findByPost(post));
-        if (comment.getLikedUsers().contains(user)) {
-            comment.setLikeCount(comment.getLikeCount() - 1);
-            comment.getLikedUsers().remove(user);
-        } else {
+        if (commentLike == null) {
             comment.setLikeCount(comment.getLikeCount() + 1);
-            comment.getLikedUsers().add(user);
+            commentLike = new CommentLike(user, comment);
+            commentLikeRepository.save(commentLike);
+        } else {
+            comment.setLikeCount(comment.getLikeCount() - 1);
+            commentLikeRepository.delete(commentLike);
         }
         commentRepository.save(comment);
         return "Post/Details";

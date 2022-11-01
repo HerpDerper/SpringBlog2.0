@@ -1,7 +1,8 @@
 package com.example.SpringRealBlog.Models;
 
 import javax.persistence.*;
-import javax.validation.constraints.*;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Size;
 import java.util.Date;
 import java.util.List;
 
@@ -33,21 +34,16 @@ public class Post {
     @JoinColumn(name = "communityOwnerId", referencedColumnName = "id")
     private CommunityOwner communityOwner;
 
-    @ManyToMany
-    @JoinTable(name = "postLike", joinColumns = @JoinColumn(name = "postId"), inverseJoinColumns = @JoinColumn(name = "userId"))
-    public List<User> likedUsers;
-
     public Post() {
     }
 
-    public Post(String description, String text, int likeCount, Date dateCreation, Thematic thematic, CommunityOwner communityOwner, List<User> likedUsers) {
+    public Post(String description, String text, int likeCount, Date dateCreation, Thematic thematic, CommunityOwner communityOwner) {
         this.description = description;
         this.text = text;
         this.likeCount = likeCount;
         this.dateCreation = dateCreation;
         this.thematic = thematic;
         this.communityOwner = communityOwner;
-        this.likedUsers = likedUsers;
     }
 
     public Long getId() {
@@ -88,14 +84,6 @@ public class Post {
 
     public void setDateCreation(Date dateCreation) {
         this.dateCreation = dateCreation;
-    }
-
-    public List<User> getLikedUsers() {
-        return likedUsers;
-    }
-
-    public void setLikedUsers(List<User> likedUsers) {
-        this.likedUsers = likedUsers;
     }
 
     public Thematic getThematic() {

@@ -9,6 +9,7 @@
 <body>
 <div th:insert="Header"></div>
 <div class="container">
+  <h1>Посты любимых сообществ</h1>
   <div class="card card_margin mb-2" th:each="el : ${posts}">
     <div class="card-header">
       Тематика: <h4 class="card-title" th:text="${el.thematic.name}"/>

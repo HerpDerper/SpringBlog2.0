@@ -19,22 +19,23 @@ public class RoleController {
         this.userRepository = userRepository;
     }
 
-    @PostMapping("/role/editRole")
-    public String postIndex(@RequestParam long userId, @RequestParam long roleId, Model model) {
+    @PostMapping("/role/editToAdmin")
+    public String roleAdmin(@RequestParam long userId, Model model) {
         model.addAttribute("adminAccess", true);
         User user = userRepository.findById(userId).get();
         user.getRoles().clear();
-        if (roleId == 0) user.getRoles().add(Role.ADMIN);
-        else user.getRoles().add(Role.USER);
+        user.getRoles().add(Role.ADMIN);
         userRepository.save(user);
         return "redirect:/user/index";
     }
 
-    @PostMapping("/role/edit")
-    public String userEdit(@RequestParam long userId, Model model) {
-        User user = userRepository.findById(userId).get();
+    @PostMapping("/role/editToUser")
+    public String roleUser(@RequestParam long userId, Model model) {
         model.addAttribute("adminAccess", true);
-        model.addAttribute("user", user);
-        return "Role/Edit";
+        User user = userRepository.findById(userId).get();
+        user.getRoles().clear();
+        user.getRoles().add(Role.USER);
+        userRepository.save(user);
+        return "redirect:/user/index";
     }
 }

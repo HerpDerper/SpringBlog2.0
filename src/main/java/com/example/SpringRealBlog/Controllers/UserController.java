@@ -1,5 +1,6 @@
 package com.example.SpringRealBlog.Controllers;
 
+import com.example.SpringRealBlog.Models.Role;
 import com.example.SpringRealBlog.Models.User;
 import com.example.SpringRealBlog.Repositories.*;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -19,30 +20,10 @@ import javax.validation.Valid;
 public class UserController {
     private final UserRepository userRepository;
 
-    private final CommentRepository commentRepository;
-
-    private final PostRepository postRepository;
-
-    private final ContactDataRepository contactDataRepository;
-
-    private final CommunitySubscriberRepository communitySubscriberRepository;
-
-    private final CommunityRepository communityRepository;
-
-    private final CommunityOwnerRepository communityOwnerRepository;
-
     private final PasswordEncoder passwordEncoder;
 
-    public UserController(UserRepository userRepository, CommentRepository commentRepository, PostRepository postRepository,
-                          ContactDataRepository contactDataRepository, CommunitySubscriberRepository communitySubscriberRepository,
-                          CommunityRepository communityRepository, CommunityOwnerRepository communityOwnerRepository, PasswordEncoder passwordEncoder) {
+    public UserController(UserRepository userRepository, PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
-        this.commentRepository = commentRepository;
-        this.postRepository = postRepository;
-        this.contactDataRepository = contactDataRepository;
-        this.communitySubscriberRepository = communitySubscriberRepository;
-        this.communityRepository = communityRepository;
-        this.communityOwnerRepository = communityOwnerRepository;
         this.passwordEncoder = passwordEncoder;
     }
 
@@ -51,6 +32,8 @@ public class UserController {
         Iterable<User> users = userRepository.findAll();
         model.addAttribute("users", users);
         model.addAttribute("adminAccess", true);
+        model.addAttribute("admin", Role.ADMIN);
+        model.addAttribute("user", Role.USER);
         return "User/Index";
     }
 
@@ -62,6 +45,8 @@ public class UserController {
              users = userRepository.findBySurnameContains(surname);
         } else users = userRepository.findAll();
         model.addAttribute("users", users);
+        model.addAttribute("adminR", Role.ADMIN);
+        model.addAttribute("user", Role.USER);
         return "User/Index";
     }
 

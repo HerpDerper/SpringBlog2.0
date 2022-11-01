@@ -35,9 +35,15 @@ public class PostController {
 
     private final CommunitySubscriberRepository communitySubscriberRepository;
 
-    public PostController(PostRepository postRepository, UserRepository userRepository, CommentRepository commentRepository,
-                          CommunityOwnerRepository communityOwnerRepository, CommunityRepository communityRepository,
-                          ThematicRepository thematicRepository, CommunitySubscriberRepository communitySubscriberRepository) {
+    private final PostLikeRepository postLikeRepository;
+
+    private final CommentLikeRepository commentLikeRepository;
+
+    public PostController(PostRepository postRepository, UserRepository userRepository,
+                          CommentRepository commentRepository, CommunityOwnerRepository communityOwnerRepository,
+                          CommunityRepository communityRepository, ThematicRepository thematicRepository,
+                          CommunitySubscriberRepository communitySubscriberRepository, PostLikeRepository postLikeRepository,
+                          CommentLikeRepository commentLikeRepository) {
         this.postRepository = postRepository;
         this.userRepository = userRepository;
         this.commentRepository = commentRepository;
@@ -45,6 +51,8 @@ public class PostController {
         this.communityRepository = communityRepository;
         this.thematicRepository = thematicRepository;
         this.communitySubscriberRepository = communitySubscriberRepository;
+        this.postLikeRepository = postLikeRepository;
+        this.commentLikeRepository = commentLikeRepository;
     }
 
     @PostMapping("/post/index")
@@ -52,6 +60,17 @@ public class PostController {
         model.addAttribute("posts", postRepository.findAll());
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         model.addAttribute("adminAccess", new AdminCheck().adminAccess(auth));
+        return "Post/Index";
+    }
+
+    @GetMapping("/post/index")
+    public String postFilter(@RequestParam(required = false) String description, Model model) {
+        Iterable<Post> posts;
+        model.addAttribute("adminAccess", true);
+        if (description != null && !description.equals("")) {
+            posts = postRepository.findByDescriptionContains(description);
+        } else posts = postRepository.findAll();
+        model.addAttribute("posts", posts);
         return "Post/Index";
     }
 
@@ -125,6 +144,7 @@ public class PostController {
     public String postEdit(@ModelAttribute("comment") Comment comment, @ModelAttribute("post") @Valid Post postValid, BindingResult bindingResult, Model model) {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         Post post = postRepository.findById(postValid.getId()).get();
+        User user = userRepository.findUserByUsername(auth.getName());
         if (bindingResult.hasErrors()) {
             model.addAttribute("adminAccess", new AdminCheck().adminAccess(auth));
             model.addAttribute("thematics", thematicRepository.findAll());
@@ -134,9 +154,11 @@ public class PostController {
         post.setDescription(postValid.getDescription());
         post.setText(postValid.getText());
         postRepository.save(post);
-        model.addAttribute("post", post);
+        comment.setText("");
         model.addAttribute("comments", commentRepository.findByPost(post));
-        model.addAttribute("username", auth.getName());
+        model.addAttribute("post", post);
+        model.addAttribute("adminAccess", new AdminCheck().adminAccess(auth));
+        model.addAttribute("user", user);
         return "Post/Details";
     }
 
@@ -144,20 +166,14 @@ public class PostController {
     public String postDelete(@RequestParam long id) {
         Post post = postRepository.findById(id).get();
         List<Comment> comments = commentRepository.findByPost(post);
+        List<PostLike> postLikes = postLikeRepository.findByPost(post);
+        List<CommentLike> commentLikes = new ArrayList<>();
+        for (Comment comment: comments) commentLikes.addAll(commentLikeRepository.findByComment(comment));
+        commentLikeRepository.deleteAll(commentLikes);
+        postLikeRepository.deleteAll(postLikes);
         commentRepository.deleteAll(comments);
         postRepository.delete(post);
         return "redirect:/post/index";
-    }
-
-    @GetMapping("/post/index")
-    public String postFilter(@RequestParam(required = false) String description, Model model) {
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        model.addAttribute("adminAccess", new AdminCheck().adminAccess(auth));
-        Iterable<Post> posts;
-        if (description != null && !description.equals("")) posts = postRepository.findByDescriptionContains(description);
-        else posts = postRepository.findAll();
-        model.addAttribute("posts", posts);
-        return "Post/Index";
     }
 
     @PostMapping("/post/likePost")
@@ -166,15 +182,17 @@ public class PostController {
         model.addAttribute("adminAccess", new AdminCheck().adminAccess(auth));
         User user = userRepository.findUserByUsername(auth.getName());
         Post post = postRepository.findById(id).get();
+        PostLike postLike = postLikeRepository.findByPostAndUser(post, user);
         model.addAttribute("post", post);
         model.addAttribute("user", user);
         model.addAttribute("comments", commentRepository.findByPost(post));
-        if (post.getLikedUsers().contains(user)) {
-            post.setLikeCount(post.getLikeCount() - 1);
-            post.getLikedUsers().remove(user);
-        } else {
+        if (postLike==null) {
+            postLike = new PostLike(user, post);
             post.setLikeCount(post.getLikeCount() + 1);
-            post.getLikedUsers().add(user);
+            postLikeRepository.save(postLike);
+        } else {
+            postLikeRepository.delete(postLike);
+            post.setLikeCount(post.getLikeCount() - 1);
         }
         postRepository.save(post);
         return "Post/Details";

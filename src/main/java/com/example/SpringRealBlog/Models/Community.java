@@ -29,10 +29,6 @@ public class Community {
 
     private int recommendationsCount;
 
-    @ManyToMany
-    @JoinTable(name = "recommended", joinColumns = @JoinColumn(name = "communityId"), inverseJoinColumns = @JoinColumn(name = "userId"))
-    public List<User> recommendedUser;
-
     public Community() {
     }
 
@@ -90,13 +86,5 @@ public class Community {
 
     public void setRecommendationsCount(int recommendationsCount) {
         this.recommendationsCount = recommendationsCount;
-    }
-
-    public List<User> getRecommendedUser() {
-        return recommendedUser;
-    }
-
-    public void setRecommendedUser(List<User> recommendedUser) {
-        this.recommendedUser = recommendedUser;
     }
 }

@@ -33,18 +33,31 @@ public class CommunityController {
 
     private final CommunitySubscriberRepository communitySubscriberRepository;
 
-    public CommunityController(CommunityRepository communityRepository, UserRepository userRepository, CommunityOwnerRepository communityOwnerRepository, PostRepository postRepository, CommentRepository commentRepository, CommunitySubscriberRepository communitySubscriberRepository) {
+    private final CommunityRecommendationRepository communityRecommendationRepository;
+
+    private final CommentLikeRepository commentLikeRepository;
+
+    private final PostLikeRepository postLikeRepository;
+
+    public CommunityController(CommunityRepository communityRepository, UserRepository userRepository,
+                               CommunityOwnerRepository communityOwnerRepository, PostRepository postRepository,
+                               CommentRepository commentRepository, CommunitySubscriberRepository communitySubscriberRepository,
+                               CommunityRecommendationRepository communityRecommendationRepository, CommentLikeRepository commentLikeRepository,
+                               PostLikeRepository postLikeRepository) {
         this.communityRepository = communityRepository;
         this.userRepository = userRepository;
         this.communityOwnerRepository = communityOwnerRepository;
         this.postRepository = postRepository;
         this.commentRepository = commentRepository;
         this.communitySubscriberRepository = communitySubscriberRepository;
+        this.communityRecommendationRepository = communityRecommendationRepository;
+        this.commentLikeRepository = commentLikeRepository;
+        this.postLikeRepository = postLikeRepository;
     }
 
     @PostMapping("/community/create")
     public String communityCreate(@ModelAttribute("community") @Valid Community community, BindingResult bindingResult) {
-        if (bindingResult.hasErrors()) return "redirect:/community/create";
+        if (bindingResult.hasErrors()) return "Community/Create";
         CommunityOwner communityOwner = new CommunityOwner(userRepository.findUserByUsername(SecurityContextHolder.getContext().getAuthentication().getName()), community);
         community.setRecommendationsCount(0);
         community.setSubscribersCount(0);
@@ -56,7 +69,8 @@ public class CommunityController {
 
     @GetMapping("/community/create")
     public String communityCreate(@ModelAttribute("community") Community community, Model model) {
-        model.addAttribute("adminAccess", new AdminCheck().adminAccess(SecurityContextHolder.getContext().getAuthentication()));
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        model.addAttribute("adminAccess", new AdminCheck().adminAccess(auth));
         return "Community/Create";
     }
 
@@ -109,15 +123,21 @@ public class CommunityController {
         Community community = communityRepository.findById(id).get();
         List<CommunityOwner> communityOwners = communityOwnerRepository.findByCommunity(community);
         List<CommunitySubscriber> communitySubscribers = communitySubscriberRepository.findByCommunity(community);
+        List<CommunityRecommendation> communityRecommendations = communityRecommendationRepository.findByCommunity(community);
         List<Post> posts = postRepository.findByCommunityOwner_Community(community);
         List<Comment> comments = new ArrayList<>();
-        for (Post post : posts) {
-            comments.addAll(commentRepository.findByPost(post));
-        }
+        List<CommentLike> commentLikes = new ArrayList<>();
+        List<PostLike> postLikes = new ArrayList<>();
+        for (Post post : posts) comments.addAll(commentRepository.findByPost(post));
+        for(Comment comment: comments) commentLikes.addAll(commentLikeRepository.findByComment(comment));
+        for(Post post: posts) postLikes.addAll(postLikeRepository.findByPost(post));
+        postLikeRepository.deleteAll(postLikes);
+        commentLikeRepository.deleteAll(commentLikes);
         commentRepository.deleteAll(comments);
         postRepository.deleteAll(posts);
         communityOwnerRepository.deleteAll(communityOwners);
         communitySubscriberRepository.deleteAll(communitySubscribers);
+        communityRecommendationRepository.deleteAll(communityRecommendations);
         communityRepository.delete(community);
         return "redirect:/community/index";
     }
@@ -148,13 +168,12 @@ public class CommunityController {
         if (communitySubscriber == null) {
             communitySubscriber = new CommunitySubscriber(user, community);
             community.setSubscribersCount(community.getSubscribersCount() + 1);
-            communityRepository.save(community);
             communitySubscriberRepository.save(communitySubscriber);
         } else {
             communitySubscriberRepository.delete(communitySubscriber);
             community.setSubscribersCount(community.getSubscribersCount() - 1);
-            communityRepository.save(community);
         }
+        communityRepository.save(community);
         model.addAttribute("posts", posts);
         model.addAttribute("community", community);
         model.addAttribute("communityOwner", communityOwner);
@@ -170,16 +189,16 @@ public class CommunityController {
         User user = userRepository.findUserByUsername(auth.getName());
         CommunityOwner communityOwner = communityOwnerRepository.findByCommunityAndUser(community, user);
         List<Post> posts = postRepository.findByCommunityOwner_Community(community);
-        if (!community.getRecommendedUser().contains(user)) {
+        CommunityRecommendation communityRecommendation = communityRecommendationRepository.findByCommunityAndUser(community, user);
+        if (communityRecommendation == null) {
+            communityRecommendation = new CommunityRecommendation(user, community);
             community.setRecommendationsCount(community.getRecommendationsCount() + 1);
-            user.recommendedCommunity.add(community);
-            community.setRecommendedUser(community.getRecommendedUser());
+            communityRecommendationRepository.save(communityRecommendation);
         } else {
+            communityRecommendationRepository.delete(communityRecommendation);
             community.setRecommendationsCount(community.getRecommendationsCount() - 1);
-            user.recommendedCommunity.remove(community);
         }
         communityRepository.save(community);
-        userRepository.save(user);
         model.addAttribute("posts", posts);
         model.addAttribute("community", community);
         model.addAttribute("communityOwner", communityOwner);
