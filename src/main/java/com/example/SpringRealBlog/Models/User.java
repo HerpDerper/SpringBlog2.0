@@ -57,11 +57,7 @@ public class User {
 
     @ManyToMany
     @JoinTable(name = "recommended", joinColumns = @JoinColumn(name = "userId"), inverseJoinColumns = @JoinColumn(name = "communityId"))
-    public List<User> recommendedCommunity;
-
-    @ManyToMany
-    @JoinTable(name = "subscriber", joinColumns = @JoinColumn(name = "userId"), inverseJoinColumns = @JoinColumn(name = "communityId"))
-    public List<Community> subscribedCommunities;
+    public List<Community> recommendedCommunity;
 
     private boolean active;
 
@@ -175,19 +171,11 @@ public class User {
         this.likedComments = likedComments;
     }
 
-    public List<User> getRecommendedCommunity() {
+    public List<Community> getRecommendedCommunity() {
         return recommendedCommunity;
     }
 
-    public void setRecommendedCommunity(List<User> recommendedCommunity) {
+    public void setRecommendedCommunity(List<Community> recommendedCommunity) {
         this.recommendedCommunity = recommendedCommunity;
-    }
-
-    public List<Community> getSubscribedCommunities() {
-        return subscribedCommunities;
-    }
-
-    public void setSubscribedCommunities(List<Community> subscribedCommunities) {
-        this.subscribedCommunities = subscribedCommunities;
     }
 }

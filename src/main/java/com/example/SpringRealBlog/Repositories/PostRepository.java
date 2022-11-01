@@ -12,8 +12,4 @@ public interface PostRepository extends CrudRepository<Post, Long> {
     List<Post> findByThematic (Thematic thematic);
 
     List<Post> findByCommunityOwner_Community(Community community);
-
-    List<Post> findByCommunityOwner_User(User user);
-
-    List<Post> findByDescriptionContainsAndCommunityOwner_Community(String description, Community community);
 }

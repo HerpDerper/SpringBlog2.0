@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <title>Изменение поста</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+  <link media="all" rel="stylesheet" th:href="@{/bootstrap.css}">
+  <link media="all" rel="stylesheet" th:href="@{/bootstrap.js}">
+</head>
+<body>
+<div th:insert="Header"></div>
+<div class="container">
+  <div class="row">
+    <div class="col-md-4">
+      <form th:action="${'/post/editPost'}" method="post" th:object="${post}">
+        <input type="hidden" name="id" th:value="*{id}"/>
+        <div class="form-group">
+          <label class="control-label">Тематика</label>
+          <select th:field="*{thematic}" class="form-control">
+            <div th:each="el : ${thematics}">
+              <option th:value="${el.id}" th:text="${el.name}"/>
+            </div>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="control-label">Описание</label>
+          <input type="text" class="form-control" th:field="*{description}" th:value="*{description}">
+          <div class="error text-danger" th:if="${#fields.hasErrors('description')}" th:errors="*{description}"></div>
+        </div>
+        <div class="form-group">
+          <label class="control-label">Текст</label>
+          <textarea class="form-control" th:field="*{text}" th:value="*{text}"></textarea>
+          <div class="error text-danger" th:if="${#fields.hasErrors('text')}" th:errors="*{text}"></div>
+        </div>
+        <div class="form-group m-lg-1">
+          <button class="btn btn-success" type="submit">Изменить</button>
+          <a class="btn btn-danger" href="/post/index">Отмена</a>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+</body>
+</html>

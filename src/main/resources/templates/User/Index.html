@@ -26,23 +26,23 @@
                         <a class="nav-link" href="/thematic/index">Тематики</a>
                     </li>
                 </ul>
-                <form class="pr-3" >
-                    <div class="form-inline form-group">
-                        <input type="text" name="email"  class="form-control" placeholder="Email"/>
-                        <div class="col-auto my-0">
-                            <div class="custom-control custom-checkbox mr-sm-2">
-                                <input type="checkbox" class="custom-control-input" id="customControl">
-                                <label class="custom-control-label" for="customControl">Точный поиск</label>
+                <form>
+                    <div class="container">
+                        <div class="row justify-content-md-center">
+                            <div class="col col-lg-6">
+                                <input type="text" name="username" class="form-control" placeholder="Логин"/>
+                            </div>
+                            <div class="col col-lg-3">
+                                <input class="btn btn-success" formmethod="get" type="submit" formaction="/user/index" value="Поиск" />
                             </div>
                         </div>
-                        <input class="btn btn-success" formmethod="get" type="submit" formaction="/user/index" value="Поиск" />
                     </div>
                 </form>
-                <form th:action="@{/logout}" method="post">
-                    <div class="form-inline form-group">
+                <div class="col col-lg-3">
+                    <form th:action="@{/logout}" method="post">
                         <input class="btn btn-danger" type="submit" value="Выйти">
-                    </div>
-                </form>
+                    </form>
+                </div>
             </div>
         </div>
     </nav>
@@ -75,7 +75,7 @@
         <tr>
             <td th:text="${el.surname}"/>
             <td th:text="${el.name}"/>
-            <td th:text="${el.lastName}"/>
+            <td th:text="${el.patronymic}"/>
             <td th:text="${el.username}"/>
             <td th:text="${el.dateBirth}"/>
             <td>
@@ -84,11 +84,11 @@
                         <input type="hidden" th:value="${el.id}" name="id">
                         <input value="Редактировать" type="submit" class="btn btn-outline-primary">
                     </form>
-                    <form th:action="@{/user/details}" method="post" class="pr-3">
+                    <form th:action="@{/user/details}" method="post">
                         <input type="hidden" th:value="${el.id}" name="id">
                         <input value="Детали" type="submit" class="btn btn-outline-info">
                     </form>
-                    <form th:action="@{/role/edit}" method="post" class="pr-3">
+                    <form th:action="@{/role/edit}" method="post">
                         <input type="hidden" th:value="${el.id}" name="userId">
                         <input value="Роли" type="submit" class="btn btn-outline-secondary">
                     </form>
@@ -101,6 +101,7 @@
                         <input value="Изменить данные" type="submit" class="btn btn-outline-warning">
                     </form>
                 </div>
+            </td>
         </tr>
         </tbody>
     </table>

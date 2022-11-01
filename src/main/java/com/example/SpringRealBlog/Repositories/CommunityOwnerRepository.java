@@ -7,7 +7,7 @@ import java.util.List;
 
 public interface CommunityOwnerRepository extends CrudRepository<CommunityOwner, Long> {
 
-    List<CommunityOwner> findByUser (User user);
+    List<CommunityOwner> findByCommunity(Community community);
 
-    List<CommunityOwner> findByCommunity (Community community);
+    CommunityOwner findByCommunityAndUser(Community community, User user);
 }

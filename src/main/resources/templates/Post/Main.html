@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <title>Посты</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+  <link media="all" rel="stylesheet" th:href="@{/bootstrap.css}">
+  <link media="all" rel="stylesheet" th:href="@{/bootstrap.js}">
+</head>
+<body>
+<div th:insert="Header"></div>
+<div class="container">
+  <div class="card card_margin mb-2" th:each="el : ${posts}">
+    <div class="card-header">
+      Тематика: <h4 class="card-title" th:text="${el.thematic.name}"/>
+      Сообщество: <h6 class="card-title" th:text="${el.communityOwner.community.name}"/>
+      Описание: <h6 class="card-title" th:text="${el.description}"/>
+    </div>
+    <div class="card-body">
+      <h6 th:text="${el.text}" class="opacity"/>
+    </div>
+    <div class="card-footer">
+      ❤ <a th:text="${el.likeCount}"/>
+      <h5 th:text="${el.communityOwner.user.username}"/>
+    </div>
+    <div class="btn-group">
+      <form th:action="@{/post/details}" method="post">
+        <input type="hidden" th:value="${el.id}" name="id">
+        <input value="Посмотреть" type="submit" class="btn btn-outline-info">
+      </form>
+    </div>
+  </div>
+</div>
+</body>
+</html>

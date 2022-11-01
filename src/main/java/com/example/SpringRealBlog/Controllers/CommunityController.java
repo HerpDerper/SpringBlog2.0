@@ -127,12 +127,11 @@ public class CommunityController {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         Community community = communityRepository.findById(id).get();
         User user = userRepository.findUserByUsername(auth.getName());
+        CommunityOwner communityOwner = communityOwnerRepository.findByCommunityAndUser(community, user);
         List<Post> posts = postRepository.findByCommunityOwner_Community(community);
-        CommunitySubscriber communitySubscriber = communitySubscriberRepository.findByCommunityAndUser(community, user);
-        if (communitySubscriber == null) model.addAttribute("message", "Подписаться");
-        else model.addAttribute("message", "Отписаться");
         model.addAttribute("posts", posts);
         model.addAttribute("community", community);
+        model.addAttribute("communityOwner", communityOwner);
         model.addAttribute("user", user);
         model.addAttribute("adminAccess", new AdminCheck().adminAccess(auth));
         return "Community/Details";
@@ -140,35 +139,52 @@ public class CommunityController {
 
     @PostMapping("/community/subscribe")
     public String communitySubscribe(@RequestParam long id, Model model) {
-        Community community = communityRepository.findById(id).get();
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        Community community = communityRepository.findById(id).get();
         User user = userRepository.findUserByUsername(auth.getName());
+        CommunityOwner communityOwner = communityOwnerRepository.findByCommunityAndUser(community, user);
         List<Post> posts = postRepository.findByCommunityOwner_Community(community);
+        CommunitySubscriber communitySubscriber = communitySubscriberRepository.findByCommunityAndUser(community, user);
+        if (communitySubscriber == null) {
+            communitySubscriber = new CommunitySubscriber(user, community);
+            community.setSubscribersCount(community.getSubscribersCount() + 1);
+            communityRepository.save(community);
+            communitySubscriberRepository.save(communitySubscriber);
+        } else {
+            communitySubscriberRepository.delete(communitySubscriber);
+            community.setSubscribersCount(community.getSubscribersCount() - 1);
+            communityRepository.save(community);
+        }
         model.addAttribute("posts", posts);
         model.addAttribute("community", community);
+        model.addAttribute("communityOwner", communityOwner);
         model.addAttribute("user", user);
         model.addAttribute("adminAccess", new AdminCheck().adminAccess(auth));
-        CommunitySubscriber communitySubscriber = new CommunitySubscriber(user, community);
-        community.setSubscribersCount(community.getSubscribersCount() + 1);
-        communityRepository.save(community);
-        communitySubscriberRepository.save(communitySubscriber);
         return "Community/Details";
     }
 
-    @PostMapping("/community/unSubscribe")
-    public String communityUnSubscribe(@RequestParam long id, Model model) {
-        Community community = communityRepository.findById(id).get();
+    @PostMapping("/community/recommend")
+    public String blogPostLike(@RequestParam long id, Model model) {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        Community community = communityRepository.findById(id).get();
         User user = userRepository.findUserByUsername(auth.getName());
+        CommunityOwner communityOwner = communityOwnerRepository.findByCommunityAndUser(community, user);
         List<Post> posts = postRepository.findByCommunityOwner_Community(community);
+        if (!community.getRecommendedUser().contains(user)) {
+            community.setRecommendationsCount(community.getRecommendationsCount() + 1);
+            user.recommendedCommunity.add(community);
+            community.setRecommendedUser(community.getRecommendedUser());
+        } else {
+            community.setRecommendationsCount(community.getRecommendationsCount() - 1);
+            user.recommendedCommunity.remove(community);
+        }
+        communityRepository.save(community);
+        userRepository.save(user);
         model.addAttribute("posts", posts);
         model.addAttribute("community", community);
+        model.addAttribute("communityOwner", communityOwner);
         model.addAttribute("user", user);
         model.addAttribute("adminAccess", new AdminCheck().adminAccess(auth));
-        CommunitySubscriber communitySubscriber = communitySubscriberRepository.findByCommunityAndUser(community, user);
-        communitySubscriberRepository.delete(communitySubscriber);
-        community.setSubscribersCount(community.getSubscribersCount() - 1);
-        communityRepository.save(community);
-        return "redirect:/community/index";
+        return "Community/Details";
     }
 }

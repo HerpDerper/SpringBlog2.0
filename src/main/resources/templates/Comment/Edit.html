@@ -1,0 +1,30 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Изменение комментария</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <link media="all" rel="stylesheet" th:href="@{/bootstrap.css}">
+    <link media="all" rel="stylesheet" th:href="@{/bootstrap.js}">
+</head>
+<body>
+<div th:insert="Header"></div>
+<div class="container">
+    <div class="row">
+        <div class="col-md-4">
+            <form th:action="${'/comment/editComment'}" method="post" th:object="${comment}">
+                <div class="form-group">
+                    <label class="control-label">Текст</label>
+                    <textarea class="form-control" name="text" th:text="*{text}"></textarea>
+                    <div class="error text-danger" th:if="${#fields.hasErrors('text')}" th:errors="*{text}"></div>
+                </div>
+                <div class="form-group m-lg-1">
+                    <input type="hidden" th:field="*{id}" th:value="*{id}"/>
+                    <button class="btn btn-success" type="submit">Изменить</button>
+                    <a class="btn btn-danger" href="/main">Отмена</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+</body>
+</html>

@@ -46,7 +46,7 @@ public class UserController {
         this.passwordEncoder = passwordEncoder;
     }
 
-    @GetMapping("/user/index")
+    @PostMapping("/user/index")
     public String userIndex(Model model) {
         Iterable<User> users = userRepository.findAll();
         model.addAttribute("users", users);

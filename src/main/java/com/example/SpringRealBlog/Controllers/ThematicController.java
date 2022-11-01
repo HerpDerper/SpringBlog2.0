@@ -76,17 +76,17 @@ public class ThematicController {
         return "redirect:/thematic/index";
     }
 
-    @PostMapping("/thematic/create")
+    @PostMapping("/thematic/createThematic")
     public String thematicCreate(@ModelAttribute("thematic") @Valid Thematic thematic, BindingResult bindingResult) {
         if (thematicRepository.findByName(thematic.getName()) != null)
             bindingResult.addError(new ObjectError("name", "Название уже занято"));
         if (bindingResult.hasErrors()) return "Thematic/Create";
         thematicRepository.save(thematic);
-        return "redirect:/";
+        return "redirect:/thematic/index";
     }
 
     @GetMapping("/thematic/create")
-    public String thematicCreate(@ModelAttribute("user") User user) {
+    public String thematicCreate(@ModelAttribute("thematic") Thematic thematic) {
         return "Thematic/Create";
     }
 }

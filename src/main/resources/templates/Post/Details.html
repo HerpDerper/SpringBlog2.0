@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <title>Изменение поста</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+  <link media="all" rel="stylesheet" th:href="@{/bootstrap.css}">
+  <link media="all" rel="stylesheet" th:href="@{/bootstrap.js}">
+</head>
+<div th:insert="Header"></div>
+<div class="container">
+  <div class="card card_margin" th:object="${post}">
+    <div class="card-header">
+      <dl class="row">
+        <dd class="col-sm-10">
+          Сообщество: <a th:text="*{communityOwner.community.name}"/>
+        </dd>
+        <dd class="col-sm-10">
+          Дата создания: <a th:text="*{dateCreation }"/>
+        </dd>
+        <dd class="col-sm-10">
+          Тематика: <a th:text="*{thematic.name}"/>
+        </dd>
+        <dd class="col-sm-10">
+          Описание: <a th:text="*{description}"/>
+        </dd>
+      </dl>
+    </div>
+    <div class="card-body">
+      <a th:text="*{text}"/>
+    </div>
+    <div class="card-footer">
+      <div class="m-lg-1">
+        <form th:action="${'/post/likePost'}" method="post">
+          <input type="hidden" name="id" th:value="${post.id}"/>
+          <button type="submit" class="btn btn-outline-success">❤</button>
+          <a th:text="*{likeCount}"/>
+        </form>
+      </div>
+    </div>
+    <div class="btn-group">
+      <div class="m-lg-1">
+        <form th:if="${user.username==post.communityOwner.user.username||adminAccess}" th:action="@{/post/edit}" method="post" class="pr-3">
+          <input type="hidden" th:value="*{id}" name="id">
+          <input value="Редактировать" type="submit" class="btn btn-outline-warning">
+        </form>
+      </div>
+      <div class="m-lg-1">
+        <form th:if="${user.username==post.communityOwner.user.username||adminAccess}" th:action="@{/post/delete}" method="post" class="pr-3">
+          <input type="hidden" th:value="*{id}" name="id">
+          <input value="Удалить" type="submit" class="btn btn-outline-danger">
+        </form>
+      </div>
+    </div>
+  </div>
+  <form th:action="${'/comment/create'}" method="post" th:object="${comment}">
+    <div class="form-group">
+      <label class="control-label">Текст</label>
+      <textarea class="form-control" th:field="*{text}"></textarea>
+      <div class="error text-danger" th:if="${#fields.hasErrors('text')}" th:errors="*{text}"></div>
+    </div>
+    <div class="form-group">
+      <input type="hidden" name="postId" th:value="${post.id}"/>
+      <button class="btn btn-success m-lg-1" type="submit">Написать комментарий</button>
+    </div>
+  </form>
+  <hr/>
+  <tbody th:each="el : ${comments}">
+  <dl class="row">
+    <dd class="col-sm-10">
+      Автор: <a th:text="${el.user.username}"/>
+    </dd>
+    <dd class="col-sm-10">
+      Дата создания: <a th:text="${el.dateCreation}"/>
+    </dd>
+    <dd class="col-sm-10">
+      <div class="m-lg-1">
+        <form th:action="${'/comment/likeComment'}" method="post">
+          <input type="hidden" name="id" th:value="${el.id}"/>
+          <button type="submit" class="btn btn-outline-success">👍</button> <a th:text="${el.likeCount}"/>
+        </form>
+      </div>
+    </dd>
+  </dl>
+  <a th:text="${el.text}"/>
+  <br/>
+  <div class="btn-group">
+    <div class="m-lg-1">
+      <form th:if="${user.username==el.user.username||adminAccess}" th:action="@{/comment/edit}" method="post" class="pr-3">
+        <input type="hidden" th:value="${el.id}" name="id">
+        <input value="Редактировать" type="submit" class="btn btn-outline-warning">
+      </form>
+    </div>
+    <div class="m-lg-1">
+      <form th:if="${user.username==el.user.username||adminAccess}" th:action="@{/comment/delete}" method="post" class="pr-3">
+        <input type="hidden" th:value="${el.id}" name="id">
+        <input value="Удалить" type="submit" class="btn btn-outline-danger">
+      </form>
+    </div>
+  </div>
+  <hr/>
+</div>
+</body>
+</html>

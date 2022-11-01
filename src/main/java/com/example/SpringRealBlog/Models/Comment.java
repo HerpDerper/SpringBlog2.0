@@ -32,18 +32,17 @@ public class Comment {
 
     @ManyToMany
     @JoinTable(name = "commentLike", joinColumns = @JoinColumn(name = "commentId"), inverseJoinColumns = @JoinColumn(name = "userId"))
-    public List<Comment> likedUsers;
+    public List<User> likedUsers;
 
     public Comment() {
     }
 
-    public Comment(String text, int likeCount, Date dateCreation, User user, Post post, List<Comment> likedUsers) {
+    public Comment(String text, int likeCount, Date dateCreation, User user, Post post) {
         this.text = text;
         this.likeCount = likeCount;
         this.dateCreation = dateCreation;
         this.user = user;
         this.post = post;
-        this.likedUsers = likedUsers;
     }
 
     public Long getId() {
@@ -94,11 +93,11 @@ public class Comment {
         this.post = post;
     }
 
-    public List<Comment> getLikedUsers() {
+    public List<User> getLikedUsers() {
         return likedUsers;
     }
 
-    public void setLikedUsers(List<Comment> likedUsers) {
+    public void setLikedUsers(List<User> likedUsers) {
         this.likedUsers = likedUsers;
     }
 }

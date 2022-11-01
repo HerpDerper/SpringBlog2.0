@@ -1,7 +1,7 @@
-<!DOCTYPE HTML>
+<!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-    <title>Сообщества</title>
+    <title>Посты</title>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
     <link media="all" rel="stylesheet" th:href="@{/bootstrap.css}">
     <link media="all" rel="stylesheet" th:href="@{/bootstrap.js}">
@@ -10,7 +10,7 @@
 <header>
     <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
         <div class="container">
-            <a class="navbar-brand" href="/main">BlogSpring</a>
+            <a class="navbar-brand" th:action="${'/'}">BlogSpring</a>
             <button class="navbar-toggler" type="button" data-toggle="collapse" data-target=".navbar-collapse" aria-controls="navbarSupportedContent"
                     aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
@@ -18,7 +18,7 @@
             <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
                 <ul class="navbar-nav flex-grow-1">
                     <li class="nav-item">
-                        <a class="nav-link" href="/post/index">Посты</a>
+                        <a class="nav-link" href="/main">Посты</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="/community/index">Сообщества</a>
@@ -34,10 +34,10 @@
                     <div class="container">
                         <div class="row justify-content-md-center">
                             <div class="col col-lg-6">
-                                <input type="text" name="name" class="form-control" placeholder="Название"/>
+                                <input type="text" name="description" class="form-control" placeholder="Описание"/>
                             </div>
                             <div class="col col-lg-3">
-                                <input class="btn btn-success" formmethod="get" type="submit" formaction="/community/index" value="Поиск" />
+                                <input class="btn btn-success" formmethod="get" type="submit" formaction="/post/index" value="Поиск" />
                             </div>
                         </div>
                     </div>
@@ -52,26 +52,24 @@
     </nav>
 </header>
 <div class="container">
-    <a class="btn btn-primary" href="/community/create" style="margin-bottom:0.5em">Добавить</a>
-    <div class="card card_margin mb-2" th:each="el : ${communities}">
+    <div class="card card_margin mb-2" th:each="el : ${posts}">
         <div class="card-header">
-            Подписчиков: <a th:text="${el.subscribersCount}"/>
-            </br>
-            Рекомендаций: <a th:text="${el.recommendationsCount}"/>
-        </div>
-        <div class="card-body">
-            Название: <h4 class="card-title" th:text="${el.name}"/>
+            Тематика: <h4 class="card-title" th:text="${el.thematic.name}"/>
+            Сообщество: <h6 class="card-title" th:text="${el.communityOwner.community.name}"/>
             Описание: <h6 class="card-title" th:text="${el.description}"/>
         </div>
+        <div class="card-body">
+            <h6 th:text="${el.text}" class="opacity"/>
+        </div>
         <div class="card-footer">
-            <div class="btn-group">
-                <div class="m-lg-1">
-                    <form th:action="@{/community/details}" method="post" class="">
-                        <input type="hidden" th:value="${el.id}" name="id">
-                        <input value="Посмотреть" type="submit" class="btn btn-outline-info">
-                    </form>
-                </div>
-            </div>
+            ❤ <a th:text="${el.likeCount}"/>
+            <h5 th:text="${el.communityOwner.user.username}"/>
+        </div>
+        <div class="btn-group">
+            <form th:action="@{/post/details}" method="post">
+                <input type="hidden" th:value="${el.id}" name="id">
+                <input value="Посмотреть" type="submit" class="btn btn-outline-info">
+            </form>
         </div>
     </div>
 </div>
