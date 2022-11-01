@@ -19,7 +19,7 @@ public class ContactData {
     private String address;
 
     @NotBlank(message = "Email не должен быть пустым")
-    @Email(regexp = "[a-zA-Z0-9]{3,20}@[a-zA-Z0-9]{3,15}[.][a-zA-Z]{2,5}", message= "Некорретный ввод электронной почты")
+    @Email(regexp = "[a-zA-Z0-9]{3,20}@[a-zA-Z0-9]{3,15}[.][a-zA-Z]{2,5}", message = "Некорретный ввод электронной почты")
     private String email;
 
     @Pattern(regexp = "^((8|\\+7)[\\- ]?)?(\\(?\\d{3}\\)?[\\- ]?)?[\\d\\- ]{7}$", message = "Некорретный ввод номера телефона")

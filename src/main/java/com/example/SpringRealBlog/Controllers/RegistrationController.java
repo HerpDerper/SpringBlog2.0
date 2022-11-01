@@ -29,10 +29,8 @@ public class RegistrationController {
 
     @PostMapping("/registration")
     public String userCreate(@ModelAttribute("user") @Valid User user, BindingResult bindingResult) {
-        if(userRepository.findUserByUsername(user.getUsername()) != null) {
-            ObjectError error = new ObjectError("username", "Логин уже занят");
-            bindingResult.addError(error);
-        }
+        if (userRepository.findUserByUsername(user.getUsername()) != null) bindingResult.addError(
+                new ObjectError("username", "Логин уже занят"));
         if (bindingResult.hasErrors()) return "User/Create";
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         user.setActive(true);

@@ -17,7 +17,6 @@ public class CommentLike {
     @JoinColumn(name = "commentId", referencedColumnName = "id")
     private Comment comment;
 
-
     public CommentLike() {
     }
 

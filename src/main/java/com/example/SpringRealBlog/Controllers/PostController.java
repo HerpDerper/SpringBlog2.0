@@ -96,7 +96,7 @@ public class PostController {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         model.addAttribute("adminAccess", new AdminCheck().adminAccess(auth));
         model.addAttribute("thematics", thematicRepository.findAll());
-        model.addAttribute("community",  communityRepository.findById(communityId).get());
+        model.addAttribute("community", communityRepository.findById(communityId).get());
         return "Post/Create";
     }
 
@@ -119,7 +119,7 @@ public class PostController {
         if (bindingResult.hasErrors()) {
             model.addAttribute("adminAccess", new AdminCheck().adminAccess(auth));
             model.addAttribute("thematics", thematicRepository.findAll());
-            model.addAttribute("community",  communityRepository.findById(communityId).get());
+            model.addAttribute("community", communityRepository.findById(communityId).get());
             return "Post/Create";
         }
         CommunityOwner communityOwner = communityOwnerRepository.findByCommunityAndUser(communityRepository.findById(communityId).get(),
@@ -168,7 +168,7 @@ public class PostController {
         List<Comment> comments = commentRepository.findByPost(post);
         List<PostLike> postLikes = postLikeRepository.findByPost(post);
         List<CommentLike> commentLikes = new ArrayList<>();
-        for (Comment comment: comments) commentLikes.addAll(commentLikeRepository.findByComment(comment));
+        for (Comment comment : comments) commentLikes.addAll(commentLikeRepository.findByComment(comment));
         commentLikeRepository.deleteAll(commentLikes);
         postLikeRepository.deleteAll(postLikes);
         commentRepository.deleteAll(comments);
@@ -186,7 +186,7 @@ public class PostController {
         model.addAttribute("post", post);
         model.addAttribute("user", user);
         model.addAttribute("comments", commentRepository.findByPost(post));
-        if (postLike==null) {
+        if (postLike == null) {
             postLike = new PostLike(user, post);
             post.setLikeCount(post.getLikeCount() + 1);
             postLikeRepository.save(postLike);

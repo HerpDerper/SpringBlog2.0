@@ -22,30 +22,16 @@ public class ThematicController {
 
     private final ThematicRepository thematicRepository;
 
-    private final CommunityRepository communityRepository;
-
-    private final CommunityOwnerRepository communityOwnerRepository;
-
     private final PostRepository postRepository;
 
     private final CommentRepository commentRepository;
-
-    private final CommunitySubscriberRepository communitySubscriberRepository;
-
-    private final CommunityRecommendationRepository communityRecommendationRepository;
 
     private final CommentLikeRepository commentLikeRepository;
 
     private final PostLikeRepository postLikeRepository;
 
-    public ThematicController(ThematicRepository thematicRepository, CommunityRepository communityRepository,
-                              CommunityOwnerRepository communityOwnerRepository, CommentRepository commentRepository, PostRepository postRepository,
-                              CommunitySubscriberRepository communitySubscriberRepository, CommunityRecommendationRepository communityRecommendationRepository,
+    public ThematicController(ThematicRepository thematicRepository, CommentRepository commentRepository, PostRepository postRepository,
                               CommentLikeRepository commentLikeRepository, PostLikeRepository postLikeRepository) {
-        this.communityRepository = communityRepository;
-        this.communityOwnerRepository = communityOwnerRepository;
-        this.communitySubscriberRepository = communitySubscriberRepository;
-        this.communityRecommendationRepository = communityRecommendationRepository;
         this.commentLikeRepository = commentLikeRepository;
         this.postLikeRepository = postLikeRepository;
         this.thematicRepository = thematicRepository;
@@ -98,7 +84,7 @@ public class ThematicController {
     }
 
     @PostMapping("/thematic/createThematic")
-    public String thematicCreate(@ModelAttribute("thematic") @Valid Thematic thematic, BindingResult bindingResult, Model model) {
+    public String thematicCreate(@ModelAttribute("thematic") @Valid Thematic thematic, BindingResult bindingResult) {
         if (thematicRepository.findByName(thematic.getName()) != null)
             bindingResult.addError(new ObjectError("name", "Название уже занято"));
         if (bindingResult.hasErrors()) return "Thematic/Create";

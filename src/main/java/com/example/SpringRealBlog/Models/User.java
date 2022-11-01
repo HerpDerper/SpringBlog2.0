@@ -5,7 +5,6 @@ import org.springframework.format.annotation.DateTimeFormat;
 import javax.persistence.*;
 import javax.validation.constraints.*;
 import java.util.Date;
-import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -20,7 +19,6 @@ public class User {
     @Column(unique = true)
     private String username;
 
-    // @Pattern(regexp = "[a-zA-Zа-яА-Я0-9]{1,30}", message = "Имя должно быть от 1 до 30 символов и состоять только из букв")
     @NotBlank(message = "Пароль не должен быть пустым или состоять из одних лишь пробелов")
     private String password;
 

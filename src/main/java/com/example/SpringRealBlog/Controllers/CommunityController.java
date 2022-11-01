@@ -129,8 +129,8 @@ public class CommunityController {
         List<CommentLike> commentLikes = new ArrayList<>();
         List<PostLike> postLikes = new ArrayList<>();
         for (Post post : posts) comments.addAll(commentRepository.findByPost(post));
-        for(Comment comment: comments) commentLikes.addAll(commentLikeRepository.findByComment(comment));
-        for(Post post: posts) postLikes.addAll(postLikeRepository.findByPost(post));
+        for (Comment comment : comments) commentLikes.addAll(commentLikeRepository.findByComment(comment));
+        for (Post post : posts) postLikes.addAll(postLikeRepository.findByPost(post));
         postLikeRepository.deleteAll(postLikes);
         commentLikeRepository.deleteAll(commentLikes);
         commentRepository.deleteAll(comments);

@@ -2,7 +2,7 @@ package com.example.SpringRealBlog.Controllers;
 
 import com.example.SpringRealBlog.Models.Role;
 import com.example.SpringRealBlog.Models.User;
-import com.example.SpringRealBlog.Repositories.*;
+import com.example.SpringRealBlog.Repositories.UserRepository;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
@@ -40,9 +40,8 @@ public class UserController {
     public String userFilter(@RequestParam(required = false) String surname, Model model) {
         Iterable<User> users;
         model.addAttribute("adminAccess", true);
-        if (surname != null && !surname.equals("")) {
-             users = userRepository.findBySurnameContains(surname);
-        } else users = userRepository.findAll();
+        if (surname != null && !surname.equals("")) users = userRepository.findBySurnameContains(surname);
+        else users = userRepository.findAll();
         model.addAttribute("users", users);
         model.addAttribute("adminR", Role.ADMIN);
         return "User/Index";

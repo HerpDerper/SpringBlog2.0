@@ -1,11 +1,9 @@
 package com.example.SpringRealBlog.Controllers;
 
-import com.example.SpringRealBlog.AdminCheck;
 import com.example.SpringRealBlog.Models.ContactData;
 import com.example.SpringRealBlog.Models.User;
 import com.example.SpringRealBlog.Repositories.ContactDataRepository;
 import com.example.SpringRealBlog.Repositories.UserRepository;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
