@@ -32,8 +32,7 @@ public class UserController {
         Iterable<User> users = userRepository.findAll();
         model.addAttribute("users", users);
         model.addAttribute("adminAccess", true);
-        model.addAttribute("admin", Role.ADMIN);
-        model.addAttribute("user", Role.USER);
+        model.addAttribute("adminR", Role.ADMIN);
         return "User/Index";
     }
 
@@ -46,7 +45,6 @@ public class UserController {
         } else users = userRepository.findAll();
         model.addAttribute("users", users);
         model.addAttribute("adminR", Role.ADMIN);
-        model.addAttribute("user", Role.USER);
         return "User/Index";
     }
 

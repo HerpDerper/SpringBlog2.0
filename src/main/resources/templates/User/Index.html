@@ -88,11 +88,11 @@
                         <input type="hidden" th:value="${el.id}" name="id">
                         <input value="Детали" type="submit" class="btn btn-outline-info">
                     </form>
-                    <form th:if="${el.getRoles().contains(userR)}" th:action="@{/role/editToAdmin}" method="post">
+                    <form th:if="${!el.roles.contains(adminR)}" th:action="@{/role/editToAdmin}" method="post">
                         <input type="hidden" th:value="${el.id}" name="userId">
                         <input value="Сделать админом" type="submit" class="btn btn-outline-danger">
                     </form>
-                    <form th:if="${el.getRoles().contains(adminR)}" th:action="@{/role/editToUser}" method="post">
+                    <form th:if="${el.roles.contains(adminR)}" th:action="@{/role/editToUser}" method="post">
                         <input type="hidden" th:value="${el.id}" name="userId">
                         <input value="Сделать пользователем" type="submit" class="btn btn-outline-success">
                     </form>
