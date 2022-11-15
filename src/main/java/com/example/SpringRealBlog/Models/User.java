@@ -28,7 +28,7 @@ public class User {
     @Pattern(regexp = "[a-zA-Zа-яА-Я]{1,30}", message = "Фамилия должна быть от 1 до 30 символов и состоять только из букв")
     private String surname;
 
-    @Pattern(regexp = "[a-zA-Zа-яА-Я]{0,30}", message = "Отчество должно быть от 1 до 30 символов и состоять только из букв")
+    @Pattern(regexp = "[a-zA-Zа-яА-Я]{0,30}", message = "Отчество должно быть от 0 до 30 символов и состоять только из букв")
     private String patronymic;
 
     @NotNull(message = "Дата рождения не должна быть пустой")
